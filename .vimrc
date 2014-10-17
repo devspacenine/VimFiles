@@ -1,3 +1,6 @@
+""" Pathogen Package Manager
+execute pathogen#infect()
+
 filetype plugin on
 filetype indent on
 
@@ -10,13 +13,17 @@ au BufNewFile,BufRead,BufEnter +.ino colorscheme blackboard
 au BufNewFile,BufRead,BufEnter *.py colorscheme blackboard
 au BufNewFile,BufRead,BufEnter *.pyc colorscheme blackboard
 au BufNewFile,BufRead,BufEnter *.js colorscheme busybee
+au BufNewFile,BufRead,BufEnter *.j2 colorscheme busybee
+au BufNewFile,BufRead,BufEnter *.jade colorscheme busybee
 au BufNewFile,BufRead,BufEnter *.json colorscheme busybee
 au BufNewFile,BufRead,BufEnter *.css colorscheme paintbox
 au BufNewFile,BufRead,BufEnter *.sass colorscheme paintbox
+au BufNewFile,BufRead,BufEnter *.less colorscheme paintbox
 au BufNewFile,BufRead,BufEnter *.scss colorscheme paintbox
 
 """ Custom File Types
 au BufNewFile,BufRead *.html set filetype=htmldjango 
+au BufNewFile,BufRead *.j2 set filetype=htmldjango
 """ Arduino File Types
 autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
@@ -24,12 +31,11 @@ autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 set backspace=indent,eol,start
 set guifont=Consolas:h10:cANSI
 set t_Co=256
-set nocompatible
 set autoindent
+set nocompatible
 set history=100
 set wildmenu
 set wildmode=list:longest
-set ruler
 set showcmd
 set incsearch
 set showmatch
@@ -51,6 +57,7 @@ set wildignore+=*.DS_STORE
 autocmd FileType xhtml set autoindent cindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
 autocmd FileType htmldjango set autoindent nocindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
 autocmd FileType html set autoindent nocindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
+autocmd FileType jade set autoindent nocindent shiftwidth=2 ts=2 foldmethod=marker textwidth=0
 """let g:html_indent_script1 = "auto"
 """let g:html_indent_style1 = "inc"
 let g:html_indent_inctags = "html,body,head,tbody"
@@ -69,11 +76,17 @@ autocmd FileType php set cinwords-=0<?
 autocmd FileType javascript set autoindent cindent shiftwidth=4 ts=4 sts=4 et foldmethod=marker wrap linebreak textwidth=0
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS autoindent nocindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
 autocmd FileType scss set omnifunc=csscomplete#CompleteCSS autoindent nocindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
+autocmd FileType less set omnifunc=csscomplete#CompleteCSS autoindent nocindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
 autocmd FileType sass set omnifunc=csscomplete#CompleteCSS autoindent nocindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
+
+""" PEP8 Settings for flake8
+let g:flake8_max_line_length=999
+autocmd BufWritePost *.py call Flake8()
 
 """ Basic Mappings
 imap {<CR> {<CR>}<ESC>k$a<CR>
 nmap <C-T> :tabnew 
+nmap <C-N> :split 
 map <C-Q> :q<CR>
 map <F4> :w<CR>
 map <F5> :edit<CR>
@@ -82,17 +95,30 @@ map <S-P> :set paste<CR>
 map <S-N> :set nopaste<CR>
 map \y :'a,'b y<ENTER>
 nmap <tab> <S-I><tab><esc>
-autocmd Filetype php nmap <C-P> a<?php  ?><esc>hhi
-autocmd Filetype php imap <C-P> <?php  ?><esc>hhi
+"""autocmd Filetype php nmap <C-P> a<?php  ?><esc>hhi
+"""autocmd Filetype php imap <C-P> <?php  ?><esc>hhi
 autocmd FileType py map \c :'a,'bs/^/#/<ENTER>:noh<ENTER>
 autocmd FileType py map \u :'a,'bs/^#//<ENTER>:noh<ENTER>
 autocmd FileType py map <C-C> I##<esc>
+
+"""setup fuzzy search with ctrlp
+set runtimepath^=~/.vim/bundle/ctrlp.vim
 
 """ Tab Mappings
 nnoremap <C-Left> :tabprevious<CR>
 nnoremap <C-Right> :tabnext<CR>
 nnoremap <silent> <A-Left> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . tabpagenr()<CR>
+
+filetype off
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+""" Bundles
+Bundle "wookiehangover/jshint.vim"
+
+filetype plugin indent on
 
 """ Supertab Tab Literal Mapping
 let g:SuperTabMappingTabLiteral = "<C-T>"
