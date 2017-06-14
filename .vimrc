@@ -13,6 +13,8 @@ au BufNewFile,BufRead,BufEnter +.ino colorscheme blackboard
 au BufNewFile,BufRead,BufEnter *.py colorscheme blackboard
 au BufNewFile,BufRead,BufEnter *.pyc colorscheme blackboard
 au BufNewFile,BufRead,BufEnter *.js colorscheme busybee
+au BufNewFile,BufRead,BufEnter *.jsx colorscheme busybee
+au BufNewFile,BufRead,BufEnter *.es6 colorscheme busybee
 au BufNewFile,BufRead,BufEnter *.j2 colorscheme busybee
 au BufNewFile,BufRead,BufEnter *.jade colorscheme busybee
 au BufNewFile,BufRead,BufEnter *.json colorscheme busybee
@@ -20,10 +22,17 @@ au BufNewFile,BufRead,BufEnter *.css colorscheme paintbox
 au BufNewFile,BufRead,BufEnter *.sass colorscheme paintbox
 au BufNewFile,BufRead,BufEnter *.less colorscheme paintbox
 au BufNewFile,BufRead,BufEnter *.scss colorscheme paintbox
+au BufNewFile,BufRead,BufEnter *.ts colorscheme busybee
+au BufNewFile,BufRead,BufEnter .vimrc colorscheme wombat
+au BufNewFile,BufRead,BufEnter *.gsql colorscheme wombat
+au BufNewFile,BufRead,BufEnter *.sql colorscheme wombat
+au BufNewFile,BufRead,BufEnter Dockerfile colorscheme blackboard
 
 """ Custom File Types
 au BufNewFile,BufRead *.html set filetype=htmldjango 
 au BufNewFile,BufRead *.j2 set filetype=htmldjango
+au BufNewFile,BufRead *.es6 set filetype=javascript
+au BufNewFile,BufRead *.gsql set filetype=sql
 """ Arduino File Types
 autocmd BufNewFile,BufReadPost *.ino,*.pde set filetype=cpp
 
@@ -52,6 +61,7 @@ set wildignore+=*.swp
 set wildignore+=*.jpg,*.jpeg,*.png,*.gif,*.psd
 set wildignore+=*.pdf
 set wildignore+=*.DS_STORE
+set splitright
 
 """ Indention Settings
 autocmd FileType xhtml set autoindent cindent shiftwidth=4 ts=4 foldmethod=marker wrap linebreak textwidth=0
@@ -61,7 +71,7 @@ autocmd FileType jade set autoindent nocindent shiftwidth=2 ts=2 foldmethod=mark
 """let g:html_indent_script1 = "auto"
 """let g:html_indent_style1 = "inc"
 let g:html_indent_inctags = "html,body,head,tbody"
-autocmd FileType yaml set cindent shiftwidth=4 ts=4 foldmethod=indent
+autocmd FileType yaml set cindent shiftwidth=2 ts=2 sw=2 foldmethod=indent
 autocmd FileType python set nocindent shiftwidth=4 et sw=4 ts=4 foldmethod=marker
 autocmd FileType python set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 autocmd FileType c set autoindent cindent shiftwidth=4 ts=4 foldmethod=indent
@@ -81,12 +91,17 @@ autocmd FileType sass set omnifunc=csscomplete#CompleteCSS autoindent nocindent 
 
 """ PEP8 Settings for flake8
 let g:flake8_max_line_length=999
+let g:flake8_max_complexity=75
 autocmd BufWritePost *.py call Flake8()
+
+""" JSHint Settings
+autocmd BufWritePost *.js JSHint -W097 -W079 -W043 -W051 -W104 -W119 -W014 -W086
+autocmd BufWritePost *.es6 JSHint -W097 -W079
 
 """ Basic Mappings
 imap {<CR> {<CR>}<ESC>k$a<CR>
 nmap <C-T> :tabnew 
-nmap <C-N> :split 
+nmap <C-N> :vs 
 map <C-Q> :q<CR>
 map <F4> :w<CR>
 map <F5> :edit<CR>
@@ -94,7 +109,20 @@ map <S-F5> :edit!<CR>
 map <S-P> :set paste<CR>
 map <S-N> :set nopaste<CR>
 map \y :'a,'b y<ENTER>
+""" Window Splitting
+map <C-s> <C-w>s
+map <C-d> <C-w>v
+""" Window Navigation
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
 nmap <tab> <S-I><tab><esc>
+""" Window Resizing
+map <S-Up> 7<C-w>+
+map <S-Down> 7<C-w>-
+map <S-Left> :vertical resize -7<CR>
+map <S-Right> :vertical resize +7<CR>
 """autocmd Filetype php nmap <C-P> a<?php  ?><esc>hhi
 """autocmd Filetype php imap <C-P> <?php  ?><esc>hhi
 autocmd FileType py map \c :'a,'bs/^/#/<ENTER>:noh<ENTER>
@@ -108,7 +136,7 @@ set runtimepath^=~/.vim/bundle/ctrlp.vim
 nnoremap <C-Left> :tabprevious<CR>
 nnoremap <C-Right> :tabnext<CR>
 nnoremap <silent> <A-Left> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
-nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . tabpagenr()<CR>
+nnoremap <silent> <A-Right> :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
 
 filetype off
 
@@ -116,7 +144,6 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
 """ Bundles
-Bundle "wookiehangover/jshint.vim"
 
 filetype plugin indent on
 
